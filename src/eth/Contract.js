@@ -1,7 +1,7 @@
 import web3 from './web3' 
  
-let address 
-let instance 
+let address = ''
+let instance = []
 
 if(web3){
    
