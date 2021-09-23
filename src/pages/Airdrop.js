@@ -72,6 +72,7 @@ export default class Exchange extends React.Component{
     
                 
                 if(account){
+                    console.log('Airdrop:', Airdrop)
                     if(Airdrop.contract && Airdrop.address){
                         const callback = await Airdrop.contract.methods.checkStatus(account).call()
                         console.log('Status:', callback)
