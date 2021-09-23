@@ -1,11 +1,4 @@
-import React from 'react' 
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem'; 
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
+import React from 'react'  
 import Button from '@material-ui/core/Button'; 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -79,22 +72,23 @@ export default class Exchange extends React.Component{
     
                 
                 if(account){
-                    
-                    const callback = await Airdrop.contract.methods.checkStatus(account).call()
-                    console.log('Status:', callback)
-                    if(callback){
-                        let status = callback['0']
-                        let amount_wei = callback['1']
-                        let amount = web3.utils.fromWei(amount_wei.toString(), 'ether')
-                        let message = ''
-                        if(status){
-                            message = `Available reward: ${amount} CRD` 
-                        }else{
-                            message = `    No rewards available`
+                    if(Airdrop.contract && Airdrop.address){
+                        const callback = await Airdrop.contract.methods.checkStatus(account).call()
+                        console.log('Status:', callback)
+                        if(callback){
+                            let status = callback['0']
+                            let amount_wei = callback['1']
+                            let amount = web3.utils.fromWei(amount_wei.toString(), 'ether')
+                            let message = ''
+                            if(status){
+                                message = `Available reward: ${amount} CRD` 
+                            }else{
+                                message = `    No rewards available`
+                            }
+                            this.setState({statusMessage: message, status, claimMessage: '', claimStatus: false})
+                            this.removeMessage()
                         }
-                        this.setState({statusMessage: message, status, claimMessage: '', claimStatus: false})
-                        this.removeMessage()
-                    }
+                    } 
                 }
             }
         }catch(e){
@@ -116,27 +110,29 @@ export default class Exchange extends React.Component{
                 this.setState({pendingTransaciton: true})
                 
                 if(account){ 
-                    const callback = await Airdrop.contract.methods.claimReward().send({from : account})
-                    if(callback){
-                        this.setState({
-                            claimMessage: 'Successfully claimed!', 
-                            claimStatus: true,
-                            status: false,
-                            statusMessage: '',
-                            pendingTransaciton: false,
-                        
-                        })
-                        this.removeMessage()
-                    }else{
-                        this.setState({
-                            claimMessage: 'There was an issue, Please check the reward status!', 
-                            claimStatus: false, 
-                            status: false,
-                            statusMessage: '',
-                            pendingTransaciton: false
-                        })
-                        this.removeMessage()
-                    }
+                    if(Airdrop.contract && Airdrop.address){
+                        const callback = await Airdrop.contract.methods.claimReward().send({from : account})
+                        if(callback){
+                            this.setState({
+                                claimMessage: 'Successfully claimed!', 
+                                claimStatus: true,
+                                status: false,
+                                statusMessage: '',
+                                pendingTransaciton: false,
+                            
+                            })
+                            this.removeMessage()
+                        }else{
+                            this.setState({
+                                claimMessage: 'There was an issue, Please check the reward status!', 
+                                claimStatus: false, 
+                                status: false,
+                                statusMessage: '',
+                                pendingTransaciton: false
+                            })
+                            this.removeMessage()
+                        }
+                    } 
                 }
             }
         }catch(e){
