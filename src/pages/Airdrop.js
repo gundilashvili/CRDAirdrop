@@ -5,7 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert'; 
 import Typography from '@material-ui/core/Typography'; 
-import Image from './components/images/image.png';  
+import Image from './components/images/logo.jpeg';  
 import web3 from '../eth/web3' 
 import Airdrop from '../eth/Contract'
  
@@ -157,9 +157,9 @@ export default class Exchange extends React.Component{
             <div> 
                 <AppBar position="static" color="inherit"> 
                     <Toolbar> 
-                    <img src={Image} alt="logo"  />
+                    <img style={{width: 300}}src={Image} alt="logo" href="/"  />
                         <Typography variant="h6" noWrap style={{ flexGrow: 1, marginLeft: 10}}>
-                            CryptalDash Airdrop
+                           
                         </Typography>
                         
                         <Button    
@@ -175,7 +175,7 @@ export default class Exchange extends React.Component{
                     </Toolbar> 
                 </AppBar> 
 
-                <div style={{marginTop: "15%", marginLeft: "35%"}}>
+                <div style={{marginTop: "15%", marginLeft: "37%"}}>
                     
                     <div>
                         <Button 
