@@ -4,9 +4,8 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert'; 
-import Typography from '@material-ui/core/Typography'; 
-
-
+import Typography from '@material-ui/core/Typography';   
+import { Grid } from "@material-ui/core";    
 import Logo from '../assets/images/logo.jpeg';  
 import BoxCRD from '../assets/images/box_crd.png';  
 import BoxEmpty from '../assets/images/box_empty.png';  
@@ -17,24 +16,12 @@ import YoutubeLogo from '../assets/images/akar-icons_youtube-fill.svg'
 import LinkedinLogo from '../assets/images/Group.svg'
 import BitcloutLogo from '../assets/images/bitclout.svg'
 import TelegramLogo from '../assets/images/Vector-1.svg'
-import RedditLogo from '../assets/images/Reddit.png'
-import BitcointalkLogo from '../assets/images/Bitcointalk.jpg'
-import DiscordLogo from '../assets/images/Discord.png'
-import NetworkLogo from '../assets/images/crd-network.png'
+import RedditLogo from '../assets/images/Reddit.png' 
+import DiscordLogo from '../assets/images/Discord.png' 
 
-import web3 from '../eth/web3' 
-import Airdrop from '../eth/Contract'
-import { Grid } from "@material-ui/core"; 
-import Alert from  '@material-ui/lab/Alert';  
-import Container from '@material-ui/core/Container';
-
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';    
-
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';  
 import CookiePolicy from './components/CookiePolicy';
-
+import Airdrop from '../eth/Contract'
+import web3 from '../eth/web3' 
 
 export default class Exchange extends React.Component{ 
     
@@ -49,7 +36,7 @@ export default class Exchange extends React.Component{
         pendingStatus: false,
         claimMessage: '',
         claimStatus: false,
-        cookiePopupIsOpen: false
+        cookiePopupIsOpen: true
     } 
 
     async componentDidMount() { 
@@ -331,9 +318,12 @@ export default class Exchange extends React.Component{
 
 
                 <div className="footer">
-                    
-                    <hr/>
+                    <div style={{  textAlign:"center"}}> 
+                        <a  style={{color: "black"}}href="https://etherscan.io/address/0x72bd28a344924baf2d0eecda9df49d8ece6dd728#code" target="_blank" >Smart Contract: &nbsp;&nbsp; 0x72bd28a344924baf2d0eecda9df49d8ece6dd728</a>
+                    </div>
+                    <hr style={{marginTop:30}}/>
                     <footer>
+                   
                         <div className="social">
                             <a href="https://twitter.com/CRDNetwork" target="_blank">  
                                 <img 
@@ -451,20 +441,11 @@ export default class Exchange extends React.Component{
                         </ul> 
                     </footer>
                 </div>
-                 
-             
-
-                <Dialog open={this.state.cookiePopupIsOpen} 
-                        onClose={this.handleClosePopup} 
-                        aria-labelledby="form-dialog-title"
-                        maxWidth="md" 
-                        fullWidth={true} >
-                        <DialogTitle id="form-dialog-title">Cookie Policy</DialogTitle> 
-                        <CookiePolicy
-                            close={this.handleClosePopup} 
-                        /> 
-                </Dialog> 
-               
+                  
+                <CookiePolicy
+                    close={this.handleClosePopup} 
+                    isOpen={this.state.cookiePopupIsOpen}
+                />  
             </div> 
         )
     } 

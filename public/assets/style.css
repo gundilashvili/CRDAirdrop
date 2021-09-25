@@ -58,3 +58,10 @@
     color:#aaa;
     margin-bottom:0;
   }
+
+  *{
+    -ms-overflow-style: none;
+  }
+  ::-webkit-scrollbar {
+    display: none;
+  }
