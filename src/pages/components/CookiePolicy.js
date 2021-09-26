@@ -49,12 +49,14 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function CustomizedDialogs() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(!JSON.parse(localStorage.getItem('crdtoken_cookies')));
 
  
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const handleClose = () => { 
+    localStorage.setItem('crdtoken_cookies', JSON.stringify(true))  
+    setOpen(false)
+  }
+
 
   return (
     <div>

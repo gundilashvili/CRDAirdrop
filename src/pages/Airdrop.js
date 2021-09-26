@@ -292,7 +292,7 @@ export default class Exchange extends React.Component{
                                 }}
                                 disabled={true} 
                             >
-                                Claim
+                                Register
                             </Button> 
                         </div>
                                 
