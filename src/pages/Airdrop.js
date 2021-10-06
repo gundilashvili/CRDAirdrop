@@ -33,9 +33,7 @@ export default class Exchange extends React.Component{
         status: false,
         statusMessage: '',
         pendingTransaciton: false,
-        pendingStatus: false,
-        claimMessage: '',
-        claimStatus: false,
+        pendingStatus: false, 
         cookiePopupIsOpen: true
     } 
 
@@ -57,8 +55,8 @@ export default class Exchange extends React.Component{
 
     removeMessage = () => {
         setTimeout(() => {
-            this.setState({statusMessage: '', claimMessage: ''})
-        }, 4000)
+            this.setState({statusMessage: '' })
+        }, 6000)
     }
 
 
@@ -79,40 +77,7 @@ export default class Exchange extends React.Component{
 
 
     
-    checkStatus = async () => { 
-        try{
-            if(!this.state.account){ 
-                this.connectWallet()
-            }else{
-                const accounts = await web3.eth.getAccounts() 
-                const account = accounts[0]
-                
-                if(account){
-                    this.setState({pendingStatus: true})
-                    if(Airdrop.contract && Airdrop.address){
-                        const callback = await Airdrop.contract.methods.checkStatus(account).call()
-                        
-                        if(callback){
-                            let status = callback['0']
-                            let amount_wei = callback['1']
-                            let amount = web3.utils.fromWei(amount_wei.toString(), 'ether')
-                            let message = ''
-                            if(status){
-                                message = `Available reward: ${amount} CRD` 
-                            }else{
-                                message = ` Reward not available`
-                            }
-                            this.setState({statusMessage: message, status, claimMessage: '', claimStatus: false, pendingStatus: false})
-                            this.removeMessage()
-                        }
-                    } 
-                }  
-            }
-        }catch(e){
-            this.setState({alertSeverity: 'error', alertText: 'There was an issue, please try again!'  , pendingStatus: false})
-            console.log(e)
-        } 
-    }
+   
 
 
     
@@ -126,41 +91,64 @@ export default class Exchange extends React.Component{
             }else{
                 const accounts = await web3.eth.getAccounts() 
                 const account = accounts[0] 
-                this.setState({pendingTransaciton: true})
-                
-                if(account){ 
-                    if(Airdrop.contract && Airdrop.address){
-                        const callback = await Airdrop.contract.methods.claimReward().send({from : account})
-                        if(callback){
-                            this.setState({
-                                claimMessage: 'Successfully claimed!', 
-                                claimStatus: true,
-                                status: false,
-                                statusMessage: '',
-                                pendingTransaciton: false,
-                            
-                            })
-                            this.removeMessage()
+             
+             
+                this.setState({pendingStatus: true})
+                if(Airdrop.contract && Airdrop.address){
+                    const callback = await Airdrop.contract.methods.checkStatus(account).call()
+                    // Check reward
+                    if(callback){
+                        let status = callback['0']
+                        let amount_wei = callback['1']
+                        let amount = web3.utils.fromWei(amount_wei.toString(), 'ether')
+                        let message = ''
+                        if(status){
+                            message = `Available reward: ${amount} CRD` 
                         }else{
-                            this.setState({
-                                claimMessage: 'There was an issue, Please check the reward status!', 
-                                claimStatus: false, 
-                                status: false,
-                                statusMessage: '',
-                                pendingTransaciton: false
-                            })
-                            this.removeMessage()
+                            message = ` Reward not available`
                         }
-                    } 
-                }
+                        this.setState({pendingStatus: false, statusMessage: message, status  })
+                        this.removeMessage()
+ 
+                        // Claim
+                        if(status){ 
+                            this.setState({pendingTransaciton: true}) 
+                            const claimCallback = await Airdrop.contract.methods.claimReward().send({from : account})
+                            if(claimCallback){
+                                this.setState({ 
+                                    status: true,
+                                    statusMessage: 'Successfully claimed!',
+                                    pendingTransaciton: false,
+                                
+                                })
+                                this.removeMessage()
+                            }else{
+                                this.setState({ 
+                                    status: false,
+                                    statusMessage:  'There was an issue, Please check the reward status!', 
+                                    pendingTransaciton: false
+                                })
+                                this.removeMessage()
+                            }
+                             
+                        } 
+                    }
+                }  
             }
         }catch(e){
+            let message = ''
+            if(e.message.includes('User denied transaction')){
+                message = 'Transaction was denied!'
+            }else{
+                message = "There was an issue, please try again!"
+            } 
             this.setState({
                 alertSeverity: 'error', 
-                alertText: 'There was an issue, please try again!', 
+                alertText: message, 
                 status: false,
                 statusMessage: '',
-                pendingTransaciton: false
+                pendingTransaciton: false,
+                pendingStatus: false
             })
             console.log(e)
         } 
@@ -229,34 +217,16 @@ export default class Exchange extends React.Component{
                                         borderColor: (this.state.status === false || this.state.pendingTransaciton === true) ? "": "#800af5", 
                                         color: (this.state.status === false || this.state.pendingTransaciton === true) ? "": "#800af5"
                                     }}
-                                    disabled={this.state.status === false || this.state.pendingTransaciton === true}
+                                    disabled={this.state.pendingTransaciton === true || this.state.pendingStatus === true}
                                     onClick={this.claimReward}
                                 >
-                                    Claim
+                                  {this.state.pendingStatus === true? "Checking Reward...": "Claim"}  
                                 </Button> 
-                                <div>
-                                    <Button 
-                                        variant="outlined" 
-                                        color="primary" 
-                                        style={{
-                                            marginTop: 30, 
-                                            width: 225, 
-                                            marginLeft: "2%",
-                                             borderRadius: "5em", 
-                                             borderColor: this.state.pendingStatus === false ?  "#800af5" : "", 
-                                             color: this.state.pendingStatus === false ?  "#800af5" : "", 
-                                        }}  
-                                        onClick={this.checkStatus}
-                                        disabled={this.state.pendingTransaciton === true || this.state.pendingStatus === true}
-                                    >
-                                         {this.state.pendingStatus === true? "Checking reward...": "Check Reward "}
-                                    </Button>   
-                                    {this.state.statusMessage.length > 0 && ( 
-                                        <Alert style={{marginTop:40, width: 250}} severity={ this.state.status === true ? "success" : "info" } color={ this.state.status === true ? "success" : "info" }>
-                                            {this.state.statusMessage}
-                                        </Alert> 
-                                    )}  
-                                </div>
+                                {this.state.statusMessage.length > 0 && ( 
+                                    <Alert style={{marginTop:40, width: 250}} severity={ this.state.status === true ? "success" : "info" } color={ this.state.status === true ? "success" : "info" }>
+                                        {this.state.statusMessage}
+                                    </Alert> 
+                                )}   
                             </div> 
                         </Grid>
 
@@ -281,7 +251,7 @@ export default class Exchange extends React.Component{
                             </Typography>
                         </div>
                         
-                        <div style={{marginTop: "13%"}}>
+                        <div style={{marginTop: "13.8%"}}>
                             <Button 
                                 variant="outlined" 
                                 color="primary" 
