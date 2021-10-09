@@ -99,7 +99,7 @@ export default class Exchange extends React.Component{
                         if(status){
                             message = `Available reward: ${amount} CRD` 
                         }else if(PendingAccounts.includes(account.toString())){
-                            message = `Rewards in progress.`
+                            message = `You are eligible for 3000 CRD. Reward assignment in progress`
                         }else{ 
                             message = `Reward not available`
                         }
@@ -142,7 +142,7 @@ export default class Exchange extends React.Component{
                         if(status){
                             message = `Available reward: ${amount} CRD` 
                         }else if(PendingAccounts.includes(account.toString())){
-                            message = `Rewards in progress.`
+                            message = `You are eligible for 3000 CRD. Reward assignment in progress`
                         }else{
                             message = ` Reward not available`
                         }
@@ -262,7 +262,7 @@ export default class Exchange extends React.Component{
                                   {this.state.pendingStatus === true? "Checking Reward...": "Claim"}  
                                 </Button> 
                                 {this.state.statusMessage.length > 0 && ( 
-                                    <Alert style={{marginTop:40, width: 250}} severity={ this.state.status === true ? "success" : "info" } color={ this.state.status === true ? "success" : "info" }>
+                                    <Alert style={{marginTop:40, width: 300 }} severity={ this.state.status === true ? "success" : "info" } color={ this.state.status === true ? "success" : "info" }>
                                         {this.state.statusMessage}
                                     </Alert> 
                                 )}   
