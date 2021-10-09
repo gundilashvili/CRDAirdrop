@@ -1,7 +1,6 @@
 import Web3 from 'web3'
 
-let web3 
-= window.web3 ?  new Web3(window.web3.currentProvider): null
+let web3 = window.web3 ?  new Web3(window.web3.currentProvider): null
 
 
 window.addEventListener("load", async () => { 
@@ -12,8 +11,10 @@ window.addEventListener("load", async () => {
           window.web3 = new Web3(window.ethereum) 
           try {  
             await window.ethereum.enable()
+          
           } catch (error) {
             // User denied account access...
+            console.log('user denied')
           }
         } 
         else if (window.web3) { 

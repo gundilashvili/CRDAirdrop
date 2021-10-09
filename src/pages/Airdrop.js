@@ -22,6 +22,7 @@ import DiscordLogo from '../assets/images/Discord.png'
 import CookiePolicy from './components/CookiePolicy';
 import Airdrop from '../eth/Contract'
 import web3 from '../eth/web3' 
+import PendingAccounts from './components/PendingAccounts';
 
 export default class Exchange extends React.Component{ 
     
@@ -41,6 +42,8 @@ export default class Exchange extends React.Component{
         if(web3){
             const accounts = await web3.eth.getAccounts() 
             this.setState({account: accounts[0]})
+            
+            this.checkReward(accounts[0])
         } 
     }
 
@@ -78,7 +81,41 @@ export default class Exchange extends React.Component{
 
     
    
+    checkReward = async (account) => {
+        try{
 
+            console.log('Account:', account)
+            console.log('PendingAccounts:', PendingAccounts)
+            if(account){
+                this.setState({pendingStatus: true})
+                if(Airdrop.contract && Airdrop.address){
+                    const callback = await Airdrop.contract.methods.checkStatus(account).call()
+                    // Check reward
+                    if(callback){
+                        let status = callback['0']
+                        let amount_wei = callback['1']
+                        let amount = web3.utils.fromWei(amount_wei.toString(), 'ether')
+                        let message = ''
+                        if(status){
+                            message = `Available reward: ${amount} CRD` 
+                        }else if(PendingAccounts.includes(account.toString())){
+                            message = `Rewards in progress.`
+                        }else{ 
+                            message = `Reward not available`
+                        }
+                        this.setState({pendingStatus: false, statusMessage: message, status  })
+                        this.removeMessage()
+                    }
+                }
+
+            }
+
+
+
+        }catch(e){
+            console.log(e)
+        }
+    }
 
     
 
@@ -104,6 +141,8 @@ export default class Exchange extends React.Component{
                         let message = ''
                         if(status){
                             message = `Available reward: ${amount} CRD` 
+                        }else if(PendingAccounts.includes(account.toString())){
+                            message = `Rewards in progress.`
                         }else{
                             message = ` Reward not available`
                         }
